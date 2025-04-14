@@ -1,4 +1,3 @@
-// ContactForm.jsx
 import React, { useRef, useState, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
@@ -6,15 +5,16 @@ import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 
 const ContactForm = () => {
   const [formState, setFormState] = useState({
-    name: "",
-    email: "",
+    from_name: "",
+    from_email: "",
     message: "",
   });
+
   const [status, setStatus] = useState({ type: null, message: "" });
   const form = useRef();
 
-  const handleInput = (e) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
+  const handleInput = ({ target: { name, value } }) => {
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const sendEmail = (e) => {
@@ -30,18 +30,14 @@ const ContactForm = () => {
       )
       .then(
         () => {
-          setFormState({ name: "", email: "", message: "" });
-          setStatus({
-            type: "success",
-            message: "Message sent successfully!",
-          });
+          setFormState({ from_name: "", from_email: "", message: "" });
+          setStatus({ type: "success", message: "Message sent successfully!" });
         },
-        (error) => {
+        () => {
           setStatus({
             type: "error",
             message: "Failed to send message. Please try again.",
           });
-          console.error("Email send failed:", error);
         }
       );
   };
@@ -60,7 +56,6 @@ const ContactForm = () => {
         onSubmit={sendEmail}
         className="flex flex-col gap-6 relative"
       >
-        {/* Status Notification */}
         {status.type && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -80,43 +75,33 @@ const ContactForm = () => {
           </motion.div>
         )}
 
-        {/* Form Inputs */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <label className="sr-only" htmlFor="name">
-            Name
-          </label>
           <input
-            id="name"
+            id="from_name"
             type="text"
             name="from_name"
             placeholder="Your Name"
             required
             className="w-full h-12 px-4 bg-lightBrown/50 rounded-lg focus:ring-2 ring-cyan transition-all duration-300"
-            value={formState.name}
+            value={formState.from_name}
             onChange={handleInput}
           />
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <label className="sr-only" htmlFor="email">
-            Email
-          </label>
           <input
-            id="email"
+            id="from_email"
             type="email"
             name="from_email"
             placeholder="Your Email"
             required
             className="w-full h-12 px-4 bg-lightBrown/50 rounded-lg focus:ring-2 ring-cyan transition-all duration-300"
-            value={formState.email}
+            value={formState.from_email}
             onChange={handleInput}
           />
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <label className="sr-only" htmlFor="message">
-            Message
-          </label>
           <textarea
             id="message"
             name="message"
